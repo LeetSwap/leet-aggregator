@@ -1,9 +1,9 @@
-# [<img align="left" alt="Java" width="50px" src="https://github.com/yieldyak/brand-assets/blob/main/y/y_400x400.png?raw=true" />](https://yieldyak.com/swap) YakSwap 
-Dex aggregator for EVM chains. UI available [here](https://yieldyak.com/swap). 
+# [<img align="left" alt="Java" width="50px" src="https://app.leetswap.finance/images/192x192_App_Icon.png" />](https://leetswap.finance) LeetSwap 
+DEX aggregator for EVM chains. Beta UI available [here](https://beta.leetswap.finance)
 
 ## About
 
-YakSwap is a set of smart contracts for optimal path finding between two assets and execution of that path. For input&output token and input-amount optimal path should have a greatest net amount-out by considering execution gas-cost.
+LeetSwap is a set of smart contracts for optimal path finding between two assets and execution of that path. For input&output token and input-amount optimal path should have a greatest net amount-out by considering execution gas-cost.
 
 Search is performed by calling on-chain query-methods and can be called by anyone. However, user should avoid calling query-methods in a mutative call due to a very large gas-cost associated with a call. 
 
@@ -12,7 +12,7 @@ Search is performed by calling on-chain query-methods and can be called by anyon
 
 ### Router
 
-YakRouter is the user-facing interface to check prices and make trades. See example off-chain usage [here](./src/examples/debridge/main.js).
+LeetRouter is the user-facing interface to check prices and make trades. See example off-chain usage [here](./src/examples/debridge/main.js).
 
 
 | Chain      | Address |
@@ -109,7 +109,7 @@ struct Trade {
 
 ### Adapter
 
-Adapters act as a common interface for YakRouter to interact with external contracts.
+Adapters act as a common interface for LeetRouter to interact with external contracts.
 
 Adapters offers methods: `query` and `swap`. 
 
@@ -143,7 +143,7 @@ yarn install
 ### Set Environmental Variables
 
 ```
-cp .env.sample > .env
+cp .env.sample .env
 ```
 
 
@@ -185,11 +185,13 @@ npx hardhat find-best-path 1000 USDC yyAVAX  --network avalanche
 ## Audits and Security
 
 This project is not audited. Use at your own risk.
-For any questions or bug reports reach out via Telegram group [YakDevs](https://t.me/yakdevs) or its admins.
+For any questions or bug reports reach out via our dev support Telegram group [LeetDevs](https://t.me/leetdevs) or its admins.
 
 ---
 
+## Acknowledgements
+This project is a fork of the [yak-aggregator](https://github.com/yieldyak/yak-aggregator) wouldn't be possible without the astonishing open source work of [Yield Yak](https://yieldyak.com)!
 
 
 Project is licensed under GPL-3, although some parts of it might be less restrictive.
-Copyright© 2021 Yield Yak
+Copyright© 2023 LeetSwap
