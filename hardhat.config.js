@@ -1,4 +1,5 @@
 require('dotenv').config();
+require("@secrez/cryptoenv").parse();
 require("@nomiclabs/hardhat-etherscan");
 require("@nomiclabs/hardhat-waffle");
 require('hardhat-contract-sizer');

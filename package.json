@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
+    "@secrez/cryptoenv": "^0.2.2",
     "dotenv": "^8.2.0",
     "hardhat-tracer": "^1.0.0-alpha.5",
     "minimist": "^1.2.6",
