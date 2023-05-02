@@ -5,6 +5,8 @@ import "./IAdapter.sol";
 
 interface IWrapper is IAdapter {
     function getTokensIn() external view returns (address[] memory);
+
     function getTokensOut() external view returns (address[] memory);
+
     function getWrappedToken() external view returns (address);
 }

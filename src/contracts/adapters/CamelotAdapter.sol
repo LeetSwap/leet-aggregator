@@ -23,11 +23,12 @@ import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
 interface IFactory {
-    function getPair(address,address) external view returns (address);
+    function getPair(address, address) external view returns (address);
 }
 
 interface IPair {
     function getAmountOut(uint256, address) external view returns (uint256);
+
     function swap(
         uint256 amount0Out,
         uint256 amount1Out,
@@ -53,7 +54,7 @@ contract CamelotAdapter is YakAdapter {
 
     function setReferrer(address _referrer) public onlyMaintainer {
         referrer = _referrer;
-    } 
+    }
 
     function getQuoteAndPair(
         uint256 _amountIn,
@@ -61,8 +62,7 @@ contract CamelotAdapter is YakAdapter {
         address _tokenOut
     ) internal view returns (uint256 amountOut, address pair) {
         pair = IFactory(FACTORY).getPair(_tokenIn, _tokenOut);
-        if (pair != address(0))
-            amountOut = IPair(pair).getAmountOut(_amountIn, _tokenIn);
+        if (pair != address(0)) amountOut = IPair(pair).getAmountOut(_amountIn, _tokenIn);
     }
 
     function _query(
@@ -70,8 +70,7 @@ contract CamelotAdapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view override returns (uint256 amountOut) {
-        if (_tokenIn != _tokenOut && _amountIn != 0)
-            (amountOut, ) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
+        if (_tokenIn != _tokenOut && _amountIn != 0) (amountOut, ) = getQuoteAndPair(_amountIn, _tokenIn, _tokenOut);
     }
 
     function _swap(

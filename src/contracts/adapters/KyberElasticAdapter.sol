@@ -71,13 +71,9 @@ contract KyberElasticAdapter is UniswapV3likeAdapter {
         tknsToPoolWL[t1][t0] = address(0);
     }
 
-    function _underlyingSwap(
-        QParams memory params, 
-        bytes memory callbackData
-    ) internal override returns (uint256) {
+    function _underlyingSwap(QParams memory params, bytes memory callbackData) internal override returns (uint256) {
         address pool = getBestPool(params.tokenIn, params.tokenOut);
-        (bool zeroForOne, uint160 sqrtPriceLimitX96) = 
-            getZeroOneAndSqrtPriceLimitX96(params.tokenIn, params.tokenOut);
+        (bool zeroForOne, uint160 sqrtPriceLimitX96) = getZeroOneAndSqrtPriceLimitX96(params.tokenIn, params.tokenOut);
         (int256 amount0, int256 amount1) = IKyberPool(pool).swap(
             address(this),
             int256(params.amountIn),
@@ -88,10 +84,7 @@ contract KyberElasticAdapter is UniswapV3likeAdapter {
         return zeroForOne ? uint256(-amount1) : uint256(-amount0);
     }
 
-    function getBestPool(
-        address token0, 
-        address token1
-    ) internal view override returns (address) {
+    function getBestPool(address token0, address token1) internal view override returns (address) {
         return tknsToPoolWL[token0][token1];
     }
 

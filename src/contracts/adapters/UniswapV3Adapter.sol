@@ -60,8 +60,7 @@ contract UniswapV3Adapter is UniswapV3likeAdapter {
 
     function enableFeeAmount(uint24 _fee) internal {
         require(!isFeeAmountEnabled[_fee], "Fee already enabled");
-        if (IUniV3Factory(FACTORY).feeAmountTickSpacing(_fee) == 0)
-            revert("Factory doesn't support fee");
+        if (IUniV3Factory(FACTORY).feeAmountTickSpacing(_fee) == 0) revert("Factory doesn't support fee");
         addFeeAmount(_fee);
     }
 
@@ -70,15 +69,11 @@ contract UniswapV3Adapter is UniswapV3likeAdapter {
         feeAmounts.push(_fee);
     }
 
-    function getBestPool(
-        address token0, 
-        address token1
-    ) internal view override returns (address mostLiquid) {
+    function getBestPool(address token0, address token1) internal view override returns (address mostLiquid) {
         uint128 deepestLiquidity;
         for (uint256 i; i < feeAmounts.length; ++i) {
             address pool = IUniV3Factory(FACTORY).getPool(token0, token1, feeAmounts[i]);
-            if (pool == address(0))
-                continue;
+            if (pool == address(0)) continue;
             uint128 liquidity = IUniV3Pool(pool).liquidity();
             if (liquidity > deepestLiquidity) {
                 deepestLiquidity = liquidity;

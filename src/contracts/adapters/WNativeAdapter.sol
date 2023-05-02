@@ -24,10 +24,7 @@ import "../YakAdapter.sol";
 contract WNativeAdapter is YakAdapter {
     address internal immutable WNATIVE;
 
-    constructor(
-        address _wNative,
-        uint256 _swapGasEstimate
-    ) YakAdapter("WAvaxAdapter", _swapGasEstimate) {
+    constructor(address _wNative, uint256 _swapGasEstimate) YakAdapter("WAvaxAdapter", _swapGasEstimate) {
         WNATIVE = _wNative;
         setSwapGasEstimate(_swapGasEstimate);
     }
@@ -37,8 +34,7 @@ contract WNativeAdapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view override returns (uint256 amountOut) {
-        if (_tokenIn == WNATIVE && _tokenOut == WNATIVE)
-            amountOut = _amountIn;
+        if (_tokenIn == WNATIVE && _tokenOut == WNATIVE) amountOut = _amountIn;
     }
 
     function _swap(

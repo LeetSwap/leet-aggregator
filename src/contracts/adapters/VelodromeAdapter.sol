@@ -85,8 +85,12 @@ contract VelodromeAdapter is YakAdapter {
         );
     }
 
-    function _getAmoutOutSafe(address pair, uint amountIn, address tokenIn) internal view returns (uint) {
-        try IPair(pair).getAmountOut(amountIn, tokenIn) returns (uint amountOut) {
+    function _getAmoutOutSafe(
+        address pair,
+        uint256 amountIn,
+        address tokenIn
+    ) internal view returns (uint256) {
+        try IPair(pair).getAmountOut(amountIn, tokenIn) returns (uint256 amountOut) {
             return amountOut;
         } catch {
             return 0;

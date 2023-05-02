@@ -18,7 +18,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
-
 import "../YakAdapter.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
@@ -122,10 +121,11 @@ contract LB2Adapter is YakAdapter {
         uint256 amountIn,
         bool swapForY
     ) internal view returns (uint256 out) {
-        try ILBPair(pair).getSwapOut{gas: quoteGasLimit}(
-            uint128(amountIn), 
-            swapForY
-        ) returns (uint128 amountInLeft, uint128 amountOut, uint128) {
+        try ILBPair(pair).getSwapOut{ gas: quoteGasLimit }(uint128(amountIn), swapForY) returns (
+            uint128 amountInLeft,
+            uint128 amountOut,
+            uint128
+        ) {
             if (amountInLeft == 0) {
                 out = amountOut;
             }

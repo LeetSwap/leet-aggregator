@@ -24,7 +24,6 @@ import "../interface/IWETH.sol";
 import "../lib/SafeERC20.sol";
 import "../YakAdapter.sol";
 
-
 contract CurvePlain128NativeAdapter is YakAdapter {
     using SafeERC20 for IERC20;
 
@@ -60,7 +59,7 @@ contract CurvePlain128NativeAdapter is YakAdapter {
     function _addTokenToPool(
         address _pool,
         address _token,
-        int128 _index, 
+        int128 _index,
         address _wNative
     ) internal {
         if (_token != NATIVE) {
@@ -88,10 +87,7 @@ contract CurvePlain128NativeAdapter is YakAdapter {
         address _tokenIn,
         address _tokenOut
     ) internal view returns (bool) {
-        return _amountIn != 0 && 
-            _tokenIn != _tokenOut && 
-            isPoolToken[_tokenIn] && 
-            isPoolToken[_tokenOut];
+        return _amountIn != 0 && _tokenIn != _tokenOut && isPoolToken[_tokenIn] && isPoolToken[_tokenOut];
     }
 
     function _getDySafe(
@@ -121,9 +117,9 @@ contract CurvePlain128NativeAdapter is YakAdapter {
             IWETH(WNATIVE).withdraw(_amountIn);
         }
         uint256 dy = ICurvePlain128Native(POOL).exchange{ value: transferVal }(
-            tokenIndex[_tokenIn], 
-            tokenIndex[_tokenOut], 
-            _amountIn, 
+            tokenIndex[_tokenIn],
+            tokenIndex[_tokenOut],
+            _amountIn,
             _amountOut
         );
         if (_tokenOut == WNATIVE) {

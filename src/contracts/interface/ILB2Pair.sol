@@ -12,5 +12,9 @@ interface ILBPair {
     function getSwapOut(uint128 amountIn, bool swapForY)
         external
         view
-        returns (uint128 amountInLeft, uint128 amountOut, uint128 fee);
+        returns (
+            uint128 amountInLeft,
+            uint128 amountOut,
+            uint128 fee
+        );
 }

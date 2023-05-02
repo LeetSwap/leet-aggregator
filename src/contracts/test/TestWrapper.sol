@@ -3,16 +3,18 @@ pragma solidity >=0.8.0;
 
 import "../YakWrapper.sol";
 
-
 interface ISomeExternalContract {
     function getWhitelistedTokens() external view returns (address[] memory);
-    function getWrappedToken() external view returns (address);
-    
-    function queryMint(address from, uint amount) external view returns (uint256);
-    function queryBurn(address to, uint amount) external view returns (uint256);
 
-    function mintWrappedToken(address from, uint amount) external;
-    function burnWrappedToken(address to, uint amount) external;
+    function getWrappedToken() external view returns (address);
+
+    function queryMint(address from, uint256 amount) external view returns (uint256);
+
+    function queryBurn(address to, uint256 amount) external view returns (uint256);
+
+    function mintWrappedToken(address from, uint256 amount) external;
+
+    function burnWrappedToken(address to, uint256 amount) external;
 }
 
 contract TestWrapper is YakWrapper {
@@ -24,8 +26,8 @@ contract TestWrapper is YakWrapper {
     address[] internal whitelistedTokens;
 
     constructor(
-        string memory _name, 
-        uint256 _gasEstimate, 
+        string memory _name,
+        uint256 _gasEstimate,
         address _someExternalContract
     ) YakWrapper(_name, _gasEstimate) {
         whitelistedTokens = ISomeExternalContract(_someExternalContract).getWhitelistedTokens();
@@ -34,24 +36,24 @@ contract TestWrapper is YakWrapper {
     }
 
     function setWhitelistedTokens(address[] memory tokens) public onlyMaintainer {
-        for (uint i = 0; i < whitelistedTokens.length; i++) {
+        for (uint256 i = 0; i < whitelistedTokens.length; i++) {
             isWhitelisted[whitelistedTokens[i]] = false;
         }
         whitelistedTokens = tokens;
-        for (uint i = 0; i < tokens.length; i++) {
+        for (uint256 i = 0; i < tokens.length; i++) {
             isWhitelisted[tokens[i]] = true;
         }
     }
 
-    function getTokensIn() override external view returns (address[] memory) {
+    function getTokensIn() external view override returns (address[] memory) {
         return whitelistedTokens;
     }
 
-    function getTokensOut() override external view returns (address[] memory) {
+    function getTokensOut() external view override returns (address[] memory) {
         return whitelistedTokens;
     }
 
-    function getWrappedToken() override external view returns (address) {
+    function getWrappedToken() external view override returns (address) {
         return wrappedToken;
     }
 
@@ -59,7 +61,7 @@ contract TestWrapper is YakWrapper {
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
-    ) override internal view returns (uint256) {
+    ) internal view override returns (uint256) {
         if (_tokenIn == wrappedToken && isWhitelisted[_tokenOut]) {
             return ISomeExternalContract(someExternalContract).queryBurn(_tokenOut, _amountIn);
         } else if (_tokenOut == wrappedToken && isWhitelisted[_tokenIn]) {
@@ -75,7 +77,7 @@ contract TestWrapper is YakWrapper {
         address _tokenIn,
         address _tokenOut,
         address _to
-    ) override internal {
+    ) internal override {
         if (_tokenIn == wrappedToken && isWhitelisted[_tokenOut]) {
             IERC20(_tokenOut).safeTransfer(someExternalContract, _amountIn);
             ISomeExternalContract(someExternalContract).burnWrappedToken(_tokenOut, _amountIn);
@@ -87,5 +89,4 @@ contract TestWrapper is YakWrapper {
         }
         _returnTo(_tokenOut, _amountOut, _to);
     }
-
 }
