@@ -38,10 +38,10 @@ module.exports.deployMinimalRouter = (networkName) => {
             feeClaimer, 
             wnative,
         ]
-        console.log('YakRouter deployment arguments: ', deployArgs)
+        console.log('LeetRouter deployment arguments: ', deployArgs)
 
-        const name = 'MinimalYakRouter'
-        const contractName = 'YakRouter'
+        const name = 'MinimalLeetRouter'
+        const contractName = 'LeetRouter'
         const optionalArgs = { gas: 4000000 }
         const deployFn = _deployContract(name, contractName, deployArgs, optionalArgs)
         await deployFn({ getNamedAccounts, deployments })
@@ -52,7 +52,7 @@ module.exports.deployMinimalRouter = (networkName) => {
     return exportEnv
 }
 
-module.exports.deployYakWrapRouter = (networkName, routerDeploymentName) => {
+module.exports.deployLeetWrapRouter = (networkName, routerDeploymentName) => {
     const deployOptions = require('../misc/deployOptions')[networkName]
     const exportEnv = async ({ getNamedAccounts, deployments }) => {
         const { deployer } = await getNamedAccounts()
@@ -63,10 +63,10 @@ module.exports.deployYakWrapRouter = (networkName, routerDeploymentName) => {
         const deployArgs = [
             router.address
         ]
-        console.log('YakWrapRouter deployment arguments: ', deployArgs)
+        console.log('LeetWrapRouter deployment arguments: ', deployArgs)
 
-        const name = 'YakWrapRouter'
-        const contractName = 'YakWrapRouter'
+        const name = 'LeetWrapRouter'
+        const contractName = 'LeetWrapRouter'
         const optionalArgs = { gas: 4000000 }
         const deployFn = _deployContract(name, contractName, deployArgs, optionalArgs)
         await deployFn({ getNamedAccounts, deployments })
@@ -94,10 +94,10 @@ module.exports.deployRouter = (networkName) => {
             feeClaimer, 
             wnative,
         ]
-        console.log('YakRouter deployment arguments: ', deployArgs)
+        console.log('LeetRouter deployment arguments: ', deployArgs)
 
-        const name = 'YakRouter'
-        const contractName = 'YakRouter'
+        const name = 'LeetRouter'
+        const contractName = 'LeetRouter'
         const optionalArgs = { gas: 4000000 }
         const deployFn = _deployContract(name, contractName, deployArgs, optionalArgs)
         await deployFn({ getNamedAccounts, deployments })

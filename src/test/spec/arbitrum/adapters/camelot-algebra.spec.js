@@ -3,7 +3,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { camelot, other } = addresses.arbitrum
 
 
-describe('YakAdapter - CamelotAlgebra', function() {
+describe('LeetAdapter - CamelotAlgebra', function() {
     
     let testEnv
     let tkns

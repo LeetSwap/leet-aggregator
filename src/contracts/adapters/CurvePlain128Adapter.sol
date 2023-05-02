@@ -1,40 +1,19 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
 import "../interface/ICurvePlain128.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
-contract CurvePlain128Adapter is YakAdapter {
+contract CurvePlain128Adapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     address public immutable POOL;
     mapping(address => int128) public tokenIndex;
     mapping(address => bool) public isPoolToken;
 
-    constructor(
-        string memory _name,
-        address _pool,
-        uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, address _pool, uint256 _swapGasEstimate) LeetAdapter(_name, _swapGasEstimate) {
         POOL = _pool;
         _setPoolTokens(_pool);
     }
@@ -50,40 +29,24 @@ contract CurvePlain128Adapter is YakAdapter {
         }
     }
 
-    function _approveToken(
-        address _pool,
-        address _token,
-        int128 _index
-    ) internal {
+    function _approveToken(address _pool, address _token, int128 _index) internal {
         IERC20(_token).safeApprove(_pool, UINT_MAX);
         tokenIndex[_token] = _index;
         isPoolToken[_token] = true;
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256) {
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view override returns (uint256) {
         if (!_validArgs(_amountIn, _tokenIn, _tokenOut)) return 0;
         uint256 amountOut = _getDySafe(_amountIn, _tokenIn, _tokenOut);
         // Account for possible rounding error
         return amountOut > 0 ? amountOut - 1 : 0;
     }
 
-    function _validArgs(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (bool) {
+    function _validArgs(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view returns (bool) {
         return _amountIn != 0 && _tokenIn != _tokenOut && isPoolToken[_tokenIn] && isPoolToken[_tokenOut];
     }
 
-    function _getDySafe(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (uint256) {
+    function _getDySafe(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view returns (uint256) {
         try ICurvePlain128(POOL).get_dy(tokenIndex[_tokenIn], tokenIndex[_tokenOut], _amountIn) returns (
             uint256 amountOut
         ) {

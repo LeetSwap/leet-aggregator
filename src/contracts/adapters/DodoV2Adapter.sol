@@ -1,38 +1,17 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
 import "../interface/IDodoV2.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
-contract DodoV2Adapter is YakAdapter {
+contract DodoV2Adapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     mapping(address => mapping(address => address)) public tknsToPool; // base > quote > pool
 
-    constructor(
-        string memory _name,
-        address[] memory _pools,
-        uint256 _gasEstimate
-    ) YakAdapter(_name, _gasEstimate) {
+    constructor(string memory _name, address[] memory _pools, uint256 _gasEstimate) LeetAdapter(_name, _gasEstimate) {
         _setPools(_pools, true);
     }
 
@@ -62,11 +41,7 @@ contract DodoV2Adapter is YakAdapter {
         quoteToken = IDodoV2(_pool)._QUOTE_TOKEN_();
     }
 
-    function _overwriteCheck(
-        address baseTkn,
-        address quoteTkn,
-        address pool
-    ) internal view {
+    function _overwriteCheck(address baseTkn, address quoteTkn, address pool) internal view {
         address existingPool = tknsToPool[baseTkn][quoteTkn];
         require(existingPool == address(0) || existingPool == pool, "Not allowed to overwrite");
     }
@@ -95,21 +70,16 @@ contract DodoV2Adapter is YakAdapter {
         _returnTo(_tokenOut, returned, _to);
     }
 
-    function _dodoSwap(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal returns (uint256) {
+    function _dodoSwap(uint256 _amountIn, address _tokenIn, address _tokenOut) internal returns (uint256) {
         (function(address) external returns (uint256) fn, address pool) = _getPoolAndSwapFn(_tokenIn, _tokenOut);
         IERC20(_tokenIn).safeTransfer(pool, _amountIn);
         return fn(address(this));
     }
 
-    function _getPoolAndSwapFn(address _tokenIn, address _tokenOut)
-        internal
-        view
-        returns (function(address) external returns (uint256), address)
-    {
+    function _getPoolAndSwapFn(
+        address _tokenIn,
+        address _tokenOut
+    ) internal view returns (function(address) external returns (uint256), address) {
         address pool = tknsToPool[_tokenIn][_tokenOut];
         if (pool != address(0)) return (IDodoV2(pool).sellBase, pool);
         pool = tknsToPool[_tokenOut][_tokenIn];

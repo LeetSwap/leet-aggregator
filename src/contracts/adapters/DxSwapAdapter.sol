@@ -1,20 +1,3 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
@@ -22,23 +5,19 @@ import "../interface/IUniswapFactory.sol";
 import "../interface/IUniswapPair.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
 interface IDxSwapPair is IUniswapPair {
     function swapFee() external view returns (uint256);
 }
 
-contract DxSwapAdapter is YakAdapter {
+contract DxSwapAdapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     uint256 internal constant FEE_DENOMINATOR = 1e4;
     address public immutable FACTORY;
 
-    constructor(
-        string memory _name,
-        address _factory,
-        uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, address _factory, uint256 _swapGasEstimate) LeetAdapter(_name, _swapGasEstimate) {
         FACTORY = _factory;
     }
 
@@ -55,11 +34,7 @@ contract DxSwapAdapter is YakAdapter {
         amountOut = numerator / denominator;
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256) {
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view override returns (uint256) {
         if (_tokenIn == _tokenOut || _amountIn == 0) {
             return 0;
         }

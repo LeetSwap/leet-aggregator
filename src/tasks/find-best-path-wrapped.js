@@ -2,7 +2,7 @@ const { task } = require("hardhat/config");
 
 const DEFAULT_MAX_HOPS = 2
 
-task("find-best-path-wrapped", "Queries YakWrapRouter for the best path", async (args, hre) => {
+task("find-best-path-wrapped", "Queries LeetWrapRouter for the best path", async (args, hre) => {
   const q = new Quoter(hre)
   const offer = await q.findBestPath(args)
   console.table(Object.entries(offer))  
@@ -69,16 +69,16 @@ class Quoter {
   }
 
   async getBestOffer(swapArgs) {
-    const YakRouter = await this.hre.ethers.getContract("YakWrapRouter")
+    const LeetRouter = await this.hre.ethers.getContract("LeetWrapRouter")
     console.log(swapArgs.wrapper);
-    const wrapper = await this.hre.ethers.getContractAt("src/contracts/YakWrapper.sol:YakWrapper", swapArgs.wrapper)
-      const offer = (swapArgs.tokenIn == await wrapper.getWrappedToken()) ? await YakRouter.unwrapAndFindBestPath(
+    const wrapper = await this.hre.ethers.getContractAt("src/contracts/LeetWrapper.sol:LeetWrapper", swapArgs.wrapper)
+      const offer = (swapArgs.tokenIn == await wrapper.getWrappedToken()) ? await LeetRouter.unwrapAndFindBestPath(
         swapArgs.amountIn, 
         swapArgs.tokenOut, 
         swapArgs.wrapper, 
         swapArgs.maxHops
       ) :
-      await YakRouter.findBestPathAndWrap(
+      await LeetRouter.findBestPathAndWrap(
         swapArgs.amountIn, 
         swapArgs.tokenIn, 
         swapArgs.wrapper, 

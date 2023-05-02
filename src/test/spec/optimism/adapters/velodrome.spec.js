@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { velodrome } = addresses.optimism
 
 
-describe('YakAdapter - Velodrome', function() {
+describe('LeetAdapter - Velodrome', function() {
     
     let testEnv
     let tkns

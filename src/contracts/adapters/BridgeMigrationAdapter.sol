@@ -1,28 +1,11 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
-contract BridgeMigrationAdapter is YakAdapter {
+contract BridgeMigrationAdapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     mapping(address => bool) public isNewBridgeToken;
@@ -31,7 +14,7 @@ contract BridgeMigrationAdapter is YakAdapter {
         address[] memory _newTokens,
         address[] memory _oldTokens,
         uint256 _swapGasEstimate
-    ) YakAdapter("BridgeMigrationAdapter", _swapGasEstimate) {
+    ) LeetAdapter("BridgeMigrationAdapter", _swapGasEstimate) {
         setNewBridgeTokens(_newTokens, _oldTokens);
     }
 

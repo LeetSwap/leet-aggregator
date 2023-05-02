@@ -1,30 +1,12 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
-contract WNativeAdapter is YakAdapter {
+contract WNativeAdapter is LeetAdapter {
     address internal immutable WNATIVE;
 
-    constructor(address _wNative, uint256 _swapGasEstimate) YakAdapter("WAvaxAdapter", _swapGasEstimate) {
+    constructor(address _wNative, uint256 _swapGasEstimate) LeetAdapter("WAvaxAdapter", _swapGasEstimate) {
         WNATIVE = _wNative;
         setSwapGasEstimate(_swapGasEstimate);
     }
@@ -37,13 +19,7 @@ contract WNativeAdapter is YakAdapter {
         if (_tokenIn == WNATIVE && _tokenOut == WNATIVE) amountOut = _amountIn;
     }
 
-    function _swap(
-        uint256 _amountIn,
-        uint256,
-        address,
-        address _tokenOut,
-        address _to
-    ) internal override {
+    function _swap(uint256 _amountIn, uint256, address, address _tokenOut, address _to) internal override {
         _returnTo(_tokenOut, _amountIn, _to);
     }
 }

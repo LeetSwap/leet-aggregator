@@ -3,7 +3,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { quickswap } = addresses.dogechain
 
 
-describe('YakAdapter - Quickswap', function() {
+describe('LeetAdapter - Quickswap', function() {
     
     let testEnv
     let tkns

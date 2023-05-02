@@ -1,34 +1,17 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
 import "../interface/ImYAK.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
-contract MiniYakAdapter is YakAdapter {
+contract MiniYakAdapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     address public constant YAK = 0x59414b3089ce2AF0010e7523Dea7E2b35d776ec7;
     address public constant mYAK = 0xdDAaAD7366B455AfF8E7c82940C43CEB5829B604;
 
-    constructor(uint256 _swapGasEstimate) YakAdapter("MiniYakAdapter", _swapGasEstimate) {
+    constructor(uint256 _swapGasEstimate) LeetAdapter("MiniYakAdapter", _swapGasEstimate) {
         setAllowances();
     }
 
@@ -47,13 +30,7 @@ contract MiniYakAdapter is YakAdapter {
         }
     }
 
-    function _swap(
-        uint256 _amountIn,
-        uint256,
-        address _tokenIn,
-        address _tokenOut,
-        address _to
-    ) internal override {
+    function _swap(uint256 _amountIn, uint256, address _tokenIn, address _tokenOut, address _to) internal override {
         if (_tokenIn == mYAK && _tokenOut == YAK) {
             ImYAK(mYAK).unmoon(_amountIn, _to);
         } else if (_tokenIn == YAK && _tokenOut == mYAK) {

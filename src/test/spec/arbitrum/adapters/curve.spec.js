@@ -6,7 +6,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { curve } = addresses.arbitrum
 
 
-describe('YakAdapter - Curve', function() {
+describe('LeetAdapter - Curve', function() {
 
     const MaxAdapterDust = parseUnits('1', 'wei')
 

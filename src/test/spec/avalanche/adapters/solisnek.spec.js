@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { SolisnekFactory } = addresses.avalanche.other
 
 
-describe('YakAdapter - Solisnek', function() {
+describe('LeetAdapter - Solisnek', function() {
     
     let testEnv
     let tkns

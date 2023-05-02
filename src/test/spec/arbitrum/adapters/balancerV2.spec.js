@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { balancerV2 } = addresses.arbitrum
 
 
-describe('YakAdapter - BalancerV2', function() {
+describe('LeetAdapter - BalancerV2', function() {
     
     let testEnv
     let tkns

@@ -2,7 +2,7 @@ const { expect } = require('chai')
 const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { WoofiPoolUSDC } = addresses.avalanche.other
 
-describe('YakAdapter - woofi', () => {
+describe('LeetAdapter - woofi', () => {
     
     let testEnv
     let tkns

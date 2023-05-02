@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { camelot } = addresses.arbitrum
 
 
-describe('YakAdapter - Camelot', () => {
+describe('LeetAdapter - Camelot', () => {
     
     let testEnv
     let tkns

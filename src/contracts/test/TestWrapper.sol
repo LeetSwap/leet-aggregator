@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import "../YakWrapper.sol";
+import "../LeetWrapper.sol";
 
 interface ISomeExternalContract {
     function getWhitelistedTokens() external view returns (address[] memory);
@@ -17,7 +17,7 @@ interface ISomeExternalContract {
     function burnWrappedToken(address to, uint256 amount) external;
 }
 
-contract TestWrapper is YakWrapper {
+contract TestWrapper is LeetWrapper {
     using SafeERC20 for IERC20;
 
     address internal immutable someExternalContract;
@@ -29,7 +29,7 @@ contract TestWrapper is YakWrapper {
         string memory _name,
         uint256 _gasEstimate,
         address _someExternalContract
-    ) YakWrapper(_name, _gasEstimate) {
+    ) LeetWrapper(_name, _gasEstimate) {
         whitelistedTokens = ISomeExternalContract(_someExternalContract).getWhitelistedTokens();
         wrappedToken = ISomeExternalContract(_someExternalContract).getWrappedToken();
         someExternalContract = _someExternalContract;

@@ -1,24 +1,7 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../interface/ILBFactory.sol";
@@ -30,7 +13,7 @@ struct LBQuote {
     bool swapForY;
 }
 
-contract LB2Adapter is YakAdapter {
+contract LB2Adapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     address public immutable FACTORY;
@@ -43,7 +26,7 @@ contract LB2Adapter is YakAdapter {
         uint256 _swapGasEstimate,
         uint256 _quoteGasLimit,
         address _factory
-    ) YakAdapter(_name, _swapGasEstimate) {
+    ) LeetAdapter(_name, _swapGasEstimate) {
         setQuoteGasLimit(_quoteGasLimit);
         FACTORY = _factory;
     }
@@ -85,15 +68,7 @@ contract LB2Adapter is YakAdapter {
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
-    )
-        internal
-        view
-        returns (
-            uint256 amountOut,
-            address pair,
-            bool swapForY
-        )
-    {
+    ) internal view returns (uint256 amountOut, address pair, bool swapForY) {
         ILBFactory.LBPairInformation[] memory LBPairsAvailable = ILBFactory(FACTORY).getAllLBPairs(_tokenIn, _tokenOut);
 
         if (LBPairsAvailable.length > 0 && _amountIn > 0) {
@@ -116,11 +91,7 @@ contract LB2Adapter is YakAdapter {
         }
     }
 
-    function getQuote(
-        address pair,
-        uint256 amountIn,
-        bool swapForY
-    ) internal view returns (uint256 out) {
+    function getQuote(address pair, uint256 amountIn, bool swapForY) internal view returns (uint256 out) {
         try ILBPair(pair).getSwapOut{ gas: quoteGasLimit }(uint128(amountIn), swapForY) returns (
             uint128 amountInLeft,
             uint128 amountOut,

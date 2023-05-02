@@ -1,26 +1,9 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
 struct QParams {
     address tokenIn;
@@ -48,15 +31,10 @@ interface IUniV3Pool {
 interface IUniV3Quoter {
     function quoteExactInputSingle(QParams memory params) external view returns (uint256);
 
-    function quote(
-        address,
-        bool,
-        int256,
-        uint160
-    ) external view returns (int256, int256);
+    function quote(address, bool, int256, uint160) external view returns (int256, int256);
 }
 
-abstract contract UniswapV3likeAdapter is YakAdapter {
+abstract contract UniswapV3likeAdapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     uint160 internal constant MAX_SQRT_RATIO = 1461446703485210103287273052203988822378723970342;
@@ -69,7 +47,7 @@ abstract contract UniswapV3likeAdapter is YakAdapter {
         uint256 _swapGasEstimate,
         address _quoter,
         uint256 _quoterGasLimit
-    ) YakAdapter(_name, _swapGasEstimate) {
+    ) LeetAdapter(_name, _swapGasEstimate) {
         setQuoterGasLimit(_quoterGasLimit);
         setQuoter(_quoter);
     }
@@ -173,11 +151,10 @@ abstract contract UniswapV3likeAdapter is YakAdapter {
         (success, data) = quoter.staticcall{ gas: quoterGasLimit }(calldata_);
     }
 
-    function getZeroOneAndSqrtPriceLimitX96(address tokenIn, address tokenOut)
-        internal
-        pure
-        returns (bool zeroForOne, uint160 sqrtPriceLimitX96)
-    {
+    function getZeroOneAndSqrtPriceLimitX96(
+        address tokenIn,
+        address tokenOut
+    ) internal pure returns (bool zeroForOne, uint160 sqrtPriceLimitX96) {
         zeroForOne = tokenIn < tokenOut;
         sqrtPriceLimitX96 = zeroForOne ? MIN_SQRT_RATIO + 1 : MAX_SQRT_RATIO - 1;
     }

@@ -1,20 +1,3 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 
 pragma solidity ^0.8.0;
@@ -22,19 +5,15 @@ pragma solidity ^0.8.0;
 import "../interface/IStabilityFund.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
-contract ArableSFAdapter is YakAdapter {
+contract ArableSFAdapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     address public vault;
     mapping(address => uint256) public tokenDecimals;
 
-    constructor(
-        string memory _name,
-        address _vault,
-        uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, address _vault, uint256 _swapGasEstimate) LeetAdapter(_name, _swapGasEstimate) {
         vault = _vault;
         setPoolTokens();
     }
@@ -51,25 +30,17 @@ contract ArableSFAdapter is YakAdapter {
         }
     }
 
-    function adjustForDecimals(
-        uint256 _amount,
-        address _tokenDiv,
-        address _tokenMul
-    ) internal view returns (uint256) {
+    function adjustForDecimals(uint256 _amount, address _tokenDiv, address _tokenMul) internal view returns (uint256) {
         uint256 decimalsDiv = tokenDecimals[_tokenDiv];
         uint256 decimalsMul = tokenDecimals[_tokenMul];
-        return (_amount * 10**decimalsMul) / 10**decimalsDiv;
+        return (_amount * 10 ** decimalsMul) / 10 ** decimalsDiv;
     }
 
     function hasVaultEnoughBal(address _token, uint256 _amount) private view returns (bool) {
         return IERC20(_token).balanceOf(vault) >= _amount;
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256) {
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view override returns (uint256) {
         if (
             _amountIn == 0 ||
             _tokenIn == _tokenOut ||

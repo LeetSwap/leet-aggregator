@@ -2,20 +2,20 @@ require('dotenv').config()
 const { ethers, config } = require('hardhat')
 
 const { assets } = require('../../misc/addresses.json').avalanche
-const yakRouterAddressAvax = require('../../deployments/avalanche/YakRouterV0.json').address
-const yakRouterAbi = require('../../abis/YakRouter.json')
+const leetRouterAddressAvax = require('../../deployments/avalanche/LeetRouterV0.json').address
+const leetRouterAbi = require('../../abis/LeetRouter.json')
 
 const providerAvax = new ethers.providers.JsonRpcProvider(config.networks.avalanche)
-const YakRouter = new ethers.Contract(
-    yakRouterAddressAvax, 
-    yakRouterAbi, 
+const LeetRouter = new ethers.Contract(
+    leetRouterAddressAvax, 
+    leetRouterAbi, 
     providerAvax
 )
 
 async function query(tknFrom, tknTo, amountIn) {
     const maxHops = 3
     const gasPrice = ethers.utils.parseUnits('225', 'gwei')
-    return YakRouter.findBestPathWithGas(
+    return LeetRouter.findBestPathWithGas(
         amountIn, 
         tknFrom, 
         tknTo, 
@@ -29,7 +29,7 @@ async function swap(signer, tknFrom, tknTo, amountIn) {
     const queryRes = await query(tknFrom, tknTo, amountIn)
     const amountOutMin = queryRes.amounts[queryRes.amounts.length-1]
     const fee = 0
-    await YakRouter.connect(signer).swapNoSplit(
+    await LeetRouter.connect(signer).swapNoSplit(
         [
             amountIn, 
             amountOutMin,

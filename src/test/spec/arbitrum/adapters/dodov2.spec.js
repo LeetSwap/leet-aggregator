@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { dodo } = addresses.arbitrum
 
 
-describe('YakAdapter - DodoV2', function() {
+describe('LeetAdapter - DodoV2', function() {
     
     let testEnv
     let tkns

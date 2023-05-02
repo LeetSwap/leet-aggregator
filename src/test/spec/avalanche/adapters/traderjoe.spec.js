@@ -1,7 +1,7 @@
 const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { unilikeFactories } = addresses.avalanche
 
-describe('YakAdapter - TraderJoe', () => {
+describe('LeetAdapter - TraderJoe', () => {
     
     let testEnv
     let tkns

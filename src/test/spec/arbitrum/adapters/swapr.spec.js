@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { swapr } = addresses.arbitrum
 
 
-describe('YakAdapter - Swapr', () => {
+describe('LeetAdapter - Swapr', () => {
     
     let testEnv
     let tkns

@@ -1,26 +1,9 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
 interface IPairFactory {
     function isPair(address) external view returns (bool);
@@ -31,25 +14,16 @@ interface IPairFactory {
 interface IPair {
     function getAmountOut(uint256, address) external view returns (uint256);
 
-    function swap(
-        uint256,
-        uint256,
-        address,
-        bytes calldata
-    ) external;
+    function swap(uint256, uint256, address, bytes calldata) external;
 }
 
-contract VelodromeAdapter is YakAdapter {
+contract VelodromeAdapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     bytes32 immutable PAIR_CODE_HASH;
     address immutable FACTORY;
 
-    constructor(
-        string memory _name,
-        address _factory,
-        uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, address _factory, uint256 _swapGasEstimate) LeetAdapter(_name, _swapGasEstimate) {
         FACTORY = _factory;
         PAIR_CODE_HASH = getPairCodeHash(_factory);
     }
@@ -63,11 +37,7 @@ contract VelodromeAdapter is YakAdapter {
     }
 
     // calculates the CREATE2 address for a pair without making any external calls
-    function pairFor(
-        address tokenA,
-        address tokenB,
-        bool stable
-    ) internal view returns (address pair) {
+    function pairFor(address tokenA, address tokenB, bool stable) internal view returns (address pair) {
         (address token0, address token1) = sortTokens(tokenA, tokenB);
         pair = address(
             uint160(
@@ -85,11 +55,7 @@ contract VelodromeAdapter is YakAdapter {
         );
     }
 
-    function _getAmoutOutSafe(
-        address pair,
-        uint256 amountIn,
-        address tokenIn
-    ) internal view returns (uint256) {
+    function _getAmoutOutSafe(address pair, uint256 amountIn, address tokenIn) internal view returns (uint256) {
         try IPair(pair).getAmountOut(amountIn, tokenIn) returns (uint256 amountOut) {
             return amountOut;
         } catch {

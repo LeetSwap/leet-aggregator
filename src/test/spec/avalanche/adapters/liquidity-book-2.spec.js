@@ -3,7 +3,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { liquidityBook } = addresses.avalanche
 
 
-describe('YakAdapter - LiquidityBook', function() {
+describe('LeetAdapter - LiquidityBook', function() {
     
     let testEnv
     let tkns

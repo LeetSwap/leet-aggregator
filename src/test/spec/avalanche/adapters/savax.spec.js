@@ -1,6 +1,6 @@
 const { setTestEnv } = require('../../../utils/test-env')
 
-describe('YakAdapter - savax', () => {
+describe('LeetAdapter - savax', () => {
     
     let testEnv
     let tkns

@@ -3,13 +3,13 @@ const prompt = require("prompt-sync")({ sigint: true });
 
 task(
     "update-adapters",
-    "Updates YakRouter's adapters according to `deployOptions.json`.'",
+    "Updates LeetRouter's adapters according to `deployOptions.json`.'",
     async function (_, hre, _) {
         const networkId = hre.network.name
         const [ deployer ] = await hre.ethers.getSigners()
-        const YakRouter = await getRouterContract(networkId)
+        const LeetRouter = await getRouterContract(networkId)
         const adaptersWhitelist = await getAdapterWhitelist(hre.deployments, networkId)
-        await updateAdapters(YakRouter, deployer, adaptersWhitelist)
+        await updateAdapters(LeetRouter, deployer, adaptersWhitelist)
     }
 );
 
@@ -23,7 +23,7 @@ function getRouterAddressForNetworkId(networkId) {
 }
 
 function getRouterDeployment(networkId) {
-    const path = `../deployments/${networkId}/YakRouter.json`
+    const path = `../deployments/${networkId}/LeetRouter.json`
     try {
         return require(path)
     } catch {
@@ -32,11 +32,11 @@ function getRouterDeployment(networkId) {
 }
 
 async function getRouterContractForAddress(routerAddress) {
-    return ethers.getContractAt('YakRouter', routerAddress)
+    return ethers.getContractAt('LeetRouter', routerAddress)
 }
 
-async function updateAdapters(yakRouter, deployerSigner, adaptersWhitelist) {
-    let currentAdapters = await getAdaptersForRouter(yakRouter)
+async function updateAdapters(leetRouter, deployerSigner, adaptersWhitelist) {
+    let currentAdapters = await getAdaptersForRouter(leetRouter)
     let allAdaptersIncluded = haveSameElements(currentAdapters, adaptersWhitelist)   
     if (allAdaptersIncluded) {
         console.log('Current adapters match whitelist')
@@ -44,7 +44,7 @@ async function updateAdapters(yakRouter, deployerSigner, adaptersWhitelist) {
     }
     showDiff(currentAdapters, adaptersWhitelist)   
     if (prompt("Proceed to set adapters? y/n") == 'y') {
-        await yakRouter
+        await leetRouter
             .connect(deployerSigner)
             .setAdapters(adaptersWhitelist)
             .then(finale)
@@ -90,9 +90,9 @@ function getAdapterWhitelistNamed(networkId) {
     return deployOptions[networkId].adapterWhitelist
 }
 
-async function getAdaptersForRouter(yakRouter) {
-    let adapterCount = await yakRouter.adaptersCount().then(r => r.toNumber())
-    return Promise.all([...Array(adapterCount).keys()].map(i => yakRouter.ADAPTERS(i)))
+async function getAdaptersForRouter(leetRouter) {
+    let adapterCount = await leetRouter.adaptersCount().then(r => r.toNumber())
+    return Promise.all([...Array(adapterCount).keys()].map(i => leetRouter.ADAPTERS(i)))
 }
 
 async function finale(res) {

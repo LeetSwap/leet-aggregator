@@ -1,20 +1,3 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 
 pragma solidity ^0.8.0;
@@ -22,9 +5,9 @@ pragma solidity ^0.8.0;
 import "../interface/IGmxVault.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
-contract GmxAdapter is YakAdapter {
+contract GmxAdapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     uint256 public constant BASIS_POINTS_DIVISOR = 1e4;
@@ -36,11 +19,7 @@ contract GmxAdapter is YakAdapter {
     mapping(address => bool) public isPoolTkn; // unwanted tkns can be ignored by adapter
     mapping(address => uint256) tokenDecimals;
 
-    constructor(
-        string memory _name,
-        address _vault,
-        uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, address _vault, uint256 _swapGasEstimate) LeetAdapter(_name, _swapGasEstimate) {
         _setVaultTkns(_vault);
         USE_VAULT_UTILS = _vaultHasUtils(_vault);
         USDG = IGmxVault(_vault).usdg();
@@ -80,19 +59,11 @@ contract GmxAdapter is YakAdapter {
 
     //                                 QUERY                                  \\
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256) {
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view override returns (uint256) {
         if (_validArgs(_amountIn, _tokenIn, _tokenOut)) return _getAmountOut(_amountIn, _tokenIn, _tokenOut);
     }
 
-    function _validArgs(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (bool) {
+    function _validArgs(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view returns (bool) {
         return
             _amountIn != 0 &&
             _tokenIn != _tokenOut &&
@@ -103,11 +74,7 @@ contract GmxAdapter is YakAdapter {
             _hasVaultEnoughBal(_tokenIn, 1); // Prevents calc problems
     }
 
-    function _getAmountOut(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (uint256) {
+    function _getAmountOut(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view returns (uint256) {
         (uint256 amountOut, uint256 usdgAmount) = _getGrossAmountOutAndUsdg(_amountIn, _tokenIn, _tokenOut);
         return _calcNetAmountOut(_tokenIn, _tokenOut, amountOut, usdgAmount);
     }
@@ -148,14 +115,10 @@ contract GmxAdapter is YakAdapter {
         return (_amountOut * (BASIS_POINTS_DIVISOR - _feeBasisPoints)) / BASIS_POINTS_DIVISOR;
     }
 
-    function _adjustForDecimals(
-        uint256 _amount,
-        address _tokenDiv,
-        address _tokenMul
-    ) internal view returns (uint256) {
+    function _adjustForDecimals(uint256 _amount, address _tokenDiv, address _tokenMul) internal view returns (uint256) {
         uint256 decimalsDiv = _tokenDiv == USDG ? USDG_DECIMALS : tokenDecimals[_tokenDiv];
         uint256 decimalsMul = _tokenMul == USDG ? USDG_DECIMALS : tokenDecimals[_tokenMul];
-        return (_amount * 10**decimalsMul) / 10**decimalsDiv;
+        return (_amount * 10 ** decimalsMul) / 10 ** decimalsDiv;
     }
 
     function _getPrices(address _tokenIn, address _tokenOut) internal view returns (uint256 priceIn, uint256 priceOut) {

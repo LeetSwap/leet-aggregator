@@ -1,40 +1,14 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
 interface IMetaPool {
-    function get_dy_underlying(
-        int128,
-        int128,
-        uint256
-    ) external view returns (uint256);
+    function get_dy_underlying(int128, int128, uint256) external view returns (uint256);
 
-    function exchange_underlying(
-        int128,
-        int128,
-        uint256,
-        uint256
-    ) external;
+    function exchange_underlying(int128, int128, uint256, uint256) external;
 
     function coins(uint256) external view returns (address);
 }
@@ -43,7 +17,7 @@ interface IBasePool {
     function coins(uint256) external view returns (address);
 }
 
-contract CurveMetaV3Adapter is YakAdapter {
+contract CurveMetaV3Adapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     mapping(address => mapping(address => int128)) public tokenIndexForPool;
@@ -53,7 +27,7 @@ contract CurveMetaV3Adapter is YakAdapter {
         string memory _name,
         address[] memory _pools,
         uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    ) LeetAdapter(_name, _swapGasEstimate) {
         setPools(_pools);
     }
 
@@ -94,12 +68,7 @@ contract CurveMetaV3Adapter is YakAdapter {
         base = IMetaPool(_pool).coins(1);
     }
 
-    function _setTokenPair(
-        address _pool,
-        address _metaTkn,
-        address _uToken,
-        int128 _index
-    ) internal {
+    function _setTokenPair(address _pool, address _metaTkn, address _uToken, int128 _index) internal {
         IERC20(_uToken).safeApprove(_pool, UINT_MAX);
         tokenIndexForPool[_pool][_uToken] = _index + 1;
         poolForTokens[_uToken][_metaTkn] = _pool;
@@ -112,11 +81,7 @@ contract CurveMetaV3Adapter is YakAdapter {
         } catch {}
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256) {
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view override returns (uint256) {
         address pool = getPool(_tokenIn, _tokenOut);
         if (pool == address(0) || _amountIn == 0) return 0;
         // `calc_token_amount` in base_pool is used in part of the query

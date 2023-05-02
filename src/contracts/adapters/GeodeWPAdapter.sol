@@ -1,20 +1,3 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
@@ -23,9 +6,9 @@ import "../interface/IGeodeWP.sol";
 import "../interface/IgAVAX.sol";
 import "../interface/IERC20.sol";
 import "../interface/IWETH.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
-contract GeodeWPAdapter is YakAdapter {
+contract GeodeWPAdapter is LeetAdapter {
     address internal constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
     uint256 internal constant gAVAX_DENOMINATOR = 1e18;
     uint256 internal constant IGNORABLE_DEBT = 1e18;
@@ -40,7 +23,7 @@ contract GeodeWPAdapter is YakAdapter {
         address _portal,
         uint256 _pooledTknId,
         uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    ) LeetAdapter(_name, _swapGasEstimate) {
         pooledTknInterface = IGeodePortal(_portal).planetCurrentInterface(_pooledTknId);
         address _pool = IGeodePortal(_portal).planetWithdrawalPool(_pooledTknId);
         address _gavax = IGeodePortal(_portal).gAVAX();
@@ -64,13 +47,7 @@ contract GeodeWPAdapter is YakAdapter {
         IgAVAX(gavax).setApprovalForAll(pool, false);
     }
 
-    function onERC1155Received(
-        address,
-        address,
-        uint256,
-        uint256,
-        bytes memory
-    ) public virtual returns (bytes4) {
+    function onERC1155Received(address, address, uint256, uint256, bytes memory) public virtual returns (bytes4) {
         return this.onERC1155Received.selector;
     }
 
@@ -109,11 +86,7 @@ contract GeodeWPAdapter is YakAdapter {
         return IGeodePortal(portal).isStakingPausedForPool(pooledTknId);
     }
 
-    function _calcSwap(
-        uint8 tknInIndex,
-        uint8 tknOutIndex,
-        uint256 amountIn
-    ) internal view returns (uint256) {
+    function _calcSwap(uint8 tknInIndex, uint8 tknOutIndex, uint256 amountIn) internal view returns (uint256) {
         try IGeodeWP(pool).calculateSwap(tknInIndex, tknOutIndex, amountIn) returns (uint256 amountOut) {
             return amountOut;
         } catch {

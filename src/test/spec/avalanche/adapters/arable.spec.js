@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { ArableSF } = addresses.avalanche.other
 
 
-describe('YakAdapter - ArableSF', () => {
+describe('LeetAdapter - ArableSF', () => {
     
     let testEnv
     let tkns

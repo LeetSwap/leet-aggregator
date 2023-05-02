@@ -4,7 +4,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { uniV3 } = addresses.optimism
 
 
-describe('YakAdapter - UniswapV3', function() {
+describe('LeetAdapter - UniswapV3', function() {
     
     let testEnv
     let tkns

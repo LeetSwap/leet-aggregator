@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import "../YakWrapper.sol";
+import "../LeetWrapper.sol";
 import "../interface/IGmxVault.sol";
 import "../interface/IGlpManager.sol";
 import "../interface/IGmxRewardRouter.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 
-contract GlpWrapper is YakWrapper {
+contract GlpWrapper is LeetWrapper {
     using SafeERC20 for IERC20;
 
     uint256 public constant BASIS_POINTS_DIVISOR = 1e4;
@@ -31,7 +31,7 @@ contract GlpWrapper is YakWrapper {
         address _gmxRewardRouter,
         address _glp,
         address _sGlp
-    ) YakWrapper(_name, _gasEstimate) {
+    ) LeetWrapper(_name, _gasEstimate) {
         address gmxGLPManager = IGmxRewardRouter(_gmxRewardRouter).glpManager();
         address gmxVault = IGlpManager(gmxGLPManager).vault();
         USDG = IGmxVault(gmxVault).usdg();
@@ -128,6 +128,6 @@ contract GlpWrapper is YakWrapper {
         }
         uint256 diff = IERC20(_toToken).balanceOf(_to) - toBalanceBefore;
         require(diff >= _amountOut, "Insufficient amount-out");
-        emit YakAdapterSwap(_fromToken, _toToken, _amountIn, _amountOut);
+        emit LeetAdapterSwap(_fromToken, _toToken, _amountIn, _amountOut);
     }
 }

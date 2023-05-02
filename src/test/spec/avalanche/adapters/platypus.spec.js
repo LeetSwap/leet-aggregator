@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { platypus } = addresses.avalanche
 
 
-describe('YakAdapter - Platypus', () => {
+describe('LeetAdapter - Platypus', () => {
     
     let testEnv
     let tkns

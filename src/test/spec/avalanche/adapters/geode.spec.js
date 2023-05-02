@@ -10,7 +10,7 @@ const { assets, other } = addresses.avalanche
 const { parseUnits, formatUnits } = ethers.utils
 const { yyPlanet } = constants.geode
 
-describe('YakAdapter - geode', () => {
+describe('LeetAdapter - geode', () => {
     
     let testEnv
     let tkns

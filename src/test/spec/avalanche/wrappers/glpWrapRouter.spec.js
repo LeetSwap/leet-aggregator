@@ -21,9 +21,9 @@ describe("GLP Wrap Router", () => {
     ate = await testEnv.setAdapterEnv(contractName, adapterArgs);
     adapter = ate.Adapter.address;
 
-    const yakRouter = "0xC4729E56b831d74bBc18797e0e17A295fA77488c";
-    const routerArgs = [yakRouter];
-    wrapRouter = await deployContract("YakWrapRouter", { args: routerArgs, deployer: testEnv.deployer });
+    const leetRouter = "0xC4729E56b831d74bBc18797e0e17A295fA77488c";
+    const routerArgs = [leetRouter];
+    wrapRouter = await deployContract("LeetWrapRouter", { args: routerArgs, deployer: testEnv.deployer });
     await ate.Adapter.setWhitelistedTokens([
       tkns.WAVAX.address,
       tkns.WETHe.address,
@@ -36,7 +36,7 @@ describe("GLP Wrap Router", () => {
     const routerOwnerAddress = "0xd22044706DeA3c342f68396bEDBCf6a2536d951D";
     const routerOwner = await getSignerForAddress(routerOwnerAddress);
     await startImpersonatingAccount(routerOwnerAddress);
-    const router = await ethers.getContractAt("src/contracts/YakRouter.sol:YakRouter", yakRouter);
+    const router = await ethers.getContractAt("src/contracts/LeetRouter.sol:LeetRouter", leetRouter);
     await router.connect(routerOwner).setAdapters([
       "0x5C4d23fd18Fc4128f77426F42237acFcE618D0b1", // WAVAX
       "0xDB66686Ac8bEA67400CF9E5DD6c8849575B90148", // TraderJoe

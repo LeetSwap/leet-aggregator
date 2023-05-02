@@ -1,24 +1,7 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
 
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
 import "../interface/ILBRouter.sol";
@@ -31,7 +14,7 @@ struct LBQuote {
     bool swapForY;
 }
 
-contract LBAdapter is YakAdapter {
+contract LBAdapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     address public immutable FACTORY;
@@ -40,11 +23,7 @@ contract LBAdapter is YakAdapter {
     bool public allowExternalPairs = true;
     uint256 public quoteGasLimit = 600_000;
 
-    constructor(
-        string memory _name,
-        uint256 _swapGasEstimate,
-        address _router
-    ) YakAdapter(_name, _swapGasEstimate) {
+    constructor(string memory _name, uint256 _swapGasEstimate, address _router) LeetAdapter(_name, _swapGasEstimate) {
         FACTORY = ILBRouter(_router).factory();
         ROUTER = _router;
     }
@@ -86,15 +65,7 @@ contract LBAdapter is YakAdapter {
         uint256 _amountIn,
         address _tokenIn,
         address _tokenOut
-    )
-        internal
-        view
-        returns (
-            uint256 amountOut,
-            address pair,
-            bool swapForY
-        )
-    {
+    ) internal view returns (uint256 amountOut, address pair, bool swapForY) {
         ILBFactory.LBPairInformation[] memory LBPairsAvailable = ILBFactory(FACTORY).getAllLBPairs(_tokenIn, _tokenOut);
 
         if (LBPairsAvailable.length > 0 && _amountIn > 0) {
@@ -117,11 +88,7 @@ contract LBAdapter is YakAdapter {
         }
     }
 
-    function getQuote(
-        address pair,
-        uint256 amountIn,
-        bool swapForY
-    ) internal view returns (uint256 amountOut) {
+    function getQuote(address pair, uint256 amountIn, bool swapForY) internal view returns (uint256 amountOut) {
         bytes memory calldata_ = abi.encodeWithSignature("getSwapOut(address,uint256,bool)", pair, amountIn, swapForY);
         (bool success, bytes memory data) = ROUTER.staticcall{ gas: quoteGasLimit }(calldata_);
         if (success)

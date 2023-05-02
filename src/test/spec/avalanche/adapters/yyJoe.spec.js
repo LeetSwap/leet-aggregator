@@ -1,7 +1,7 @@
 const { setTestEnv, addresses } = require("../../../utils/test-env");
 const { yyJOE, JOE } = addresses.avalanche.assets;
 
-describe("YakAdapter - yyJoe", () => {
+describe("LeetAdapter - yyJoe", () => {
   	let testEnv;
   	let tkns;
 	let ate; // adapter-test-env

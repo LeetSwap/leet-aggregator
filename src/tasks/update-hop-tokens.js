@@ -3,13 +3,13 @@ const prompt = require("prompt-sync")({ sigint: true });
 
 task(
     "update-hop-tokens",
-    "Updates YakRouter's hop-tokens according to `deployOptions.json`.'",
+    "Updates LeetRouter's hop-tokens according to `deployOptions.json`.'",
     async function (_, hre, _) {
         const networkId = hre.network.name
         const [ deployer ] = await hre.ethers.getSigners()
-        const YakRouter = await getRouterContract(networkId)
+        const LeetRouter = await getRouterContract(networkId)
         const hopTokensWhitelist = await getHopTokensWhitelist(networkId)
-        await updateHopTokens(YakRouter, deployer, hopTokensWhitelist)
+        await updateHopTokens(LeetRouter, deployer, hopTokensWhitelist)
     }
 );
 
@@ -23,7 +23,7 @@ function getRouterAddressForNetworkId(networkId) {
 }
 
 function getRouterDeployment(networkId) {
-    const path = `../deployments/${networkId}/YakRouter.json`
+    const path = `../deployments/${networkId}/LeetRouter.json`
     try {
         return require(path)
     } catch {
@@ -32,11 +32,11 @@ function getRouterDeployment(networkId) {
 }
 
 async function getRouterContractForAddress(routerAddress) {
-    return ethers.getContractAt('YakRouter', routerAddress)
+    return ethers.getContractAt('LeetRouter', routerAddress)
 }
 
-async function updateHopTokens(yakRouter, deployerSigner, hopTokensWhitelist) {
-    const currentHopTokens = await getTrustedTokensForRouter(yakRouter)
+async function updateHopTokens(leetRouter, deployerSigner, hopTokensWhitelist) {
+    const currentHopTokens = await getTrustedTokensForRouter(leetRouter)
     const allIncluded = haveSameElements(currentHopTokens, hopTokensWhitelist)   
     if (allIncluded) {
         console.log('Current hop-tokens match whitelist')
@@ -44,7 +44,7 @@ async function updateHopTokens(yakRouter, deployerSigner, hopTokensWhitelist) {
     }
     showDiff(currentHopTokens, hopTokensWhitelist) 
     if (prompt("Proceed to set hop-tokens? y/n") == 'y') {
-        await yakRouter
+        await leetRouter
             .connect(deployerSigner)
             .setTrustedTokens(hopTokensWhitelist)
             .then(finale)
@@ -78,9 +78,9 @@ function getHopTokensWhitelist(networkId) {
     return deployOptions[networkId].hopTokens
 }
 
-async function getTrustedTokensForRouter(yakRouter) {
-    let trustedTokensCount = await yakRouter.trustedTokensCount().then(r => r.toNumber())
-    return Promise.all([...Array(trustedTokensCount).keys()].map(i => yakRouter.TRUSTED_TOKENS(i)))
+async function getTrustedTokensForRouter(leetRouter) {
+    let trustedTokensCount = await leetRouter.trustedTokensCount().then(r => r.toNumber())
+    return Promise.all([...Array(trustedTokensCount).keys()].map(i => leetRouter.TRUSTED_TOKENS(i)))
 }
 
 async function finale(res) {

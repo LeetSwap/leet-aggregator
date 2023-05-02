@@ -2,7 +2,7 @@ const { task } = require("hardhat/config");
 
 const DEFAULT_MAX_HOPS = 3
 
-task("find-best-path", "Queries YakRouter for the best path", async (args, hre) => {
+task("find-best-path", "Queries LeetRouter for the best path", async (args, hre) => {
   const q = new Quoter(hre)
   const offer = await q.findBestPath(args)
   console.table(Object.entries(offer))  
@@ -67,8 +67,8 @@ class Quoter {
   }
 
   async getBestOffer(swapArgs) {
-    const YakRouter = await this.hre.ethers.getContract("YakRouter")
-    const offer = await YakRouter.findBestPath(
+    const LeetRouter = await this.hre.ethers.getContract("LeetRouter")
+    const offer = await LeetRouter.findBestPath(
       swapArgs.amountIn, 
       swapArgs.tokenIn, 
       swapArgs.tokenOut, 

@@ -1,30 +1,13 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // Supports Balancerlike pools
 
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity ^0.8.0;
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 import "../interface/IVault.sol";
 import "../interface/IBasePool.sol";
 import "../interface/IMinimalSwapInfoPool.sol";
 
-contract BalancerV2Adapter is YakAdapter {
+contract BalancerV2Adapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     address public vault;
@@ -37,7 +20,7 @@ contract BalancerV2Adapter is YakAdapter {
         address _vault,
         address[] memory _pools,
         uint256 _swapGasEstimate
-    ) YakAdapter(_name, _swapGasEstimate) {
+    ) LeetAdapter(_name, _swapGasEstimate) {
         vault = _vault;
         addPools(_pools);
     }
@@ -93,11 +76,7 @@ contract BalancerV2Adapter is YakAdapter {
         }
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256) {
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view override returns (uint256) {
         if (_amountIn == 0 || _tokenIn == _tokenOut) {
             return 0;
         }
@@ -171,11 +150,10 @@ contract BalancerV2Adapter is YakAdapter {
         }
     }
 
-    function _getAmountOut(IPoolSwapStructs.SwapRequest memory request, address pool)
-        internal
-        view
-        returns (uint256 amountOut)
-    {
+    function _getAmountOut(
+        IPoolSwapStructs.SwapRequest memory request,
+        address pool
+    ) internal view returns (uint256 amountOut) {
         // Based on https://github.com/balancer-labs/balancer-v2-monorepo/blob/master/pkg/vault/contracts/Swaps.sol#L275
         (, uint256[] memory balances, ) = IVault(vault).getPoolTokens(request.poolId);
         uint256 tokenInTotal = balances[poolToTokenIndex[pool][address(request.tokenIn)]];

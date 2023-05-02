@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { gmx } = addresses.arbitrum
 
 
-describe('YakAdapter - Gmx', () => {
+describe('LeetAdapter - Gmx', () => {
     
     let testEnv
     let tkns

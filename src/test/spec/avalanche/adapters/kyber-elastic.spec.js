@@ -3,7 +3,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { kyberElastic } = addresses.avalanche
 
 
-describe('YakAdapter - KyberElastic', function() {
+describe('LeetAdapter - KyberElastic', function() {
     
     let testEnv
     let tkns

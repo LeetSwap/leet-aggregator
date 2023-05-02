@@ -2,7 +2,7 @@ const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { curve } = addresses.optimism
 
 
-describe('YakAdapter - Curve', () => {
+describe('LeetAdapter - Curve', () => {
 
     const MaxDustWei = ethers.utils.parseUnits('1', 'wei')
     

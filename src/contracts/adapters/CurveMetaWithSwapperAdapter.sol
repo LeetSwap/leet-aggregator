@@ -1,20 +1,3 @@
-//       ╟╗                                                                      ╔╬
-//       ╞╬╬                                                                    ╬╠╬
-//      ╔╣╬╬╬                                                                  ╠╠╠╠╦
-//     ╬╬╬╬╬╩                                                                  ╘╠╠╠╠╬
-//    ║╬╬╬╬╬                                                                    ╘╠╠╠╠╬
-//    ╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬      ╒╬╬╬╬╬╬╬╜   ╠╠╬╬╬╬╬╬╬         ╠╬╬╬╬╬╬╬    ╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╠
-//    ╙╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬╕    ╬╬╬╬╬╬╬╜   ╣╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬   ╬╬╬╬╬╬╬╬╬╠╠╠╠╠╠╠╩
-//     ╙╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬╬  ╔╬╬╬╬╬╬╬    ╔╠╠╠╬╬╬╬╬╬╬╬        ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬╬╬╬╬╠╠╠╠╝╙
-//               ╘╣╬╬╬╬╬╬╬╬╬╬╬╬╬╬    ╒╠╠╠╬╠╬╩╬╬╬╬╬╬       ╠╬╬╬╬╬╬╬╣╬╬╬╬╬╬╬╙
-//                 ╣╬╬╬╬╬╬╬╬╬╬╠╣     ╣╬╠╠╠╬╩ ╚╬╬╬╬╬╬      ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                  ╣╬╬╬╬╬╬╬╬╬╣     ╣╬╠╠╠╬╬   ╣╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╬╬╬╬╬╬╬
-//                   ╟╬╬╬╬╬╬╬╩      ╬╬╠╠╠╠╬╬╬╬╬╬╬╬╬╬╬     ╠╬╬╬╬╬╬╬╠╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╒╬╬╠╠╬╠╠╬╬╬╬╬╬╬╬╬╬╬╬    ╠╬╬╬╬╬╬╬ ╣╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬     ╬╬╬╠╠╠╠╝╝╝╝╝╝╝╠╬╬╬╬╬╬   ╠╬╬╬╬╬╬╬  ╚╬╬╬╬╬╬╬╬
-//                    ╬╬╬╬╬╬╬    ╣╬╬╬╬╠╠╩       ╘╬╬╬╬╬╬╬  ╠╬╬╬╬╬╬╬   ╙╬╬╬╬╬╬╬╬
-//
-
 // Supports Curve MIM pool (manually enter base tokens)
 
 // SPDX-License-Identifier: GPL-3.0-only
@@ -24,19 +7,13 @@ import "../interface/ICurveMeta.sol";
 import "../interface/ICurve2.sol";
 import "../interface/IERC20.sol";
 import "../lib/SafeERC20.sol";
-import "../YakAdapter.sol";
+import "../LeetAdapter.sol";
 
 interface ICurveSwapper128 {
-    function exchange_underlying(
-        address pool,
-        int128 i,
-        int128 j,
-        uint256 dx,
-        uint256 minDy
-    ) external;
+    function exchange_underlying(address pool, int128 i, int128 j, uint256 dx, uint256 minDy) external;
 }
 
-contract CurveMetaWithSwapperAdapter is YakAdapter {
+contract CurveMetaWithSwapperAdapter is LeetAdapter {
     using SafeERC20 for IERC20;
 
     address public immutable metaPool;
@@ -52,7 +29,7 @@ contract CurveMetaWithSwapperAdapter is YakAdapter {
         address _metaPool,
         address _basePool,
         address _swapper
-    ) YakAdapter(_name, _swapGasEstimate) {
+    ) LeetAdapter(_name, _swapGasEstimate) {
         metaTkn = setMetaTkn(_metaPool, _swapper);
         metaPool = _metaPool;
         basePool = _basePool;
@@ -84,11 +61,7 @@ contract CurveMetaWithSwapperAdapter is YakAdapter {
         IERC20(_token).approve(_target, UINT_MAX);
     }
 
-    function _query(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view override returns (uint256) {
+    function _query(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view override returns (uint256) {
         if (!validInputParams(_amountIn, _tokenIn, _tokenOut)) {
             return 0;
         }
@@ -106,11 +79,7 @@ contract CurveMetaWithSwapperAdapter is YakAdapter {
         }
     }
 
-    function validInputParams(
-        uint256 _amountIn,
-        address _tokenIn,
-        address _tokenOut
-    ) internal view returns (bool) {
+    function validInputParams(uint256 _amountIn, address _tokenIn, address _tokenOut) internal view returns (bool) {
         return _amountIn != 0 && _tokenIn != _tokenOut && validPath(_tokenIn, _tokenOut);
     }
 

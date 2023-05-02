@@ -1,7 +1,7 @@
 const { setTestEnv, addresses } = require('../../../utils/test-env')
 const { curvelikePools } = addresses.avalanche
 
-describe('YakAdapter - synapse', () => {
+describe('LeetAdapter - synapse', () => {
     
     let testEnv
     let tkns
