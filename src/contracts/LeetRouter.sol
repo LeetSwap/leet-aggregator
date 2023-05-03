@@ -333,10 +333,12 @@ contract LeetRouter is Maintainable, Recoverable, ILeetRouter {
         uint256 balanceAfter = IERC20(_trade.path[_trade.path.length - 1]).balanceOf(_to);
         require(balanceAfter - balanceBefore >= _trade.amountOut, "LeetRouter: Insufficient output amount");
         emit LeetSwap(
+            msg.sender,
             _trade.path[0],
             _trade.path[_trade.path.length - 1],
             _trade.amountIn,
-            balanceAfter - balanceBefore
+            balanceAfter - balanceBefore,
+            _to
         );
         return balanceAfter - balanceBefore;
     }

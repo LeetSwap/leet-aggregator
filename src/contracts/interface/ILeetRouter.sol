@@ -31,7 +31,14 @@ interface ILeetRouter {
     event UpdatedAdapters(address[] _newAdapters);
     event UpdatedMinFee(uint256 _oldMinFee, uint256 _newMinFee);
     event UpdatedFeeClaimer(address _oldFeeClaimer, address _newFeeClaimer);
-    event LeetSwap(address indexed _tokenIn, address indexed _tokenOut, uint256 _amountIn, uint256 _amountOut);
+    event LeetSwap(
+        address indexed _sender,
+        address indexed _tokenIn,
+        address indexed _tokenOut,
+        uint256 _amountIn,
+        uint256 _amountOut,
+        address _to
+    );
 
     // admin
     function setTrustedTokens(address[] memory _trustedTokens) external;
