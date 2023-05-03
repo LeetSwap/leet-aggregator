@@ -326,13 +326,9 @@ contract LeetRouter is Maintainable, Recoverable, ILeetRouter {
             // All adapters should transfer output token to the following target
             // All targets are the adapters, expect for the last swap where tokens are sent out
             address targetAddress = i < _trade.adapters.length - 1 ? _trade.adapters[i + 1] : _to;
-            IAdapter(_trade.adapters[i]).swap(
-                amounts[i],
-                amounts[i + 1],
-                _trade.path[i],
-                _trade.path[i + 1],
-                targetAddress
-            );
+            // Use amountOut for the last swap to allow setting slippage on the frontend
+            uint256 amountOut = i < _trade.adapters.length - 1 ? amounts[i + 1] : _trade.amountOut;
+            IAdapter(_trade.adapters[i]).swap(amounts[i], amountOut, _trade.path[i], _trade.path[i + 1], targetAddress);
         }
         uint256 balanceAfter = IERC20(_trade.path[_trade.path.length - 1]).balanceOf(_to);
         require(balanceAfter - balanceBefore >= _trade.amountOut, "LeetRouter: Insufficient output amount");
