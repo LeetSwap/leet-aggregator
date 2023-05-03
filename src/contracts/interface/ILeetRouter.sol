@@ -63,7 +63,11 @@ interface ILeetRouter {
         uint8[] calldata _options
     ) external view returns (Query memory);
 
-    function queryNoSplit(uint256 _amountIn, address _tokenIn, address _tokenOut) external view returns (Query memory);
+    function queryNoSplit(
+        uint256 _amountIn,
+        address _tokenIn,
+        address _tokenOut
+    ) external view returns (Query memory);
 
     function findBestPathWithGas(
         uint256 _amountIn,
@@ -82,11 +86,23 @@ interface ILeetRouter {
 
     // swap
 
-    function swapNoSplit(Trade calldata _trade, address _to, uint256 _fee) external;
+    function swapNoSplit(
+        Trade calldata _trade,
+        address _to,
+        uint256 _fee
+    ) external returns (uint256 amountOut);
 
-    function swapNoSplitFromAVAX(Trade calldata _trade, address _to, uint256 _fee) external payable;
+    function swapNoSplitFromAVAX(
+        Trade calldata _trade,
+        address _to,
+        uint256 _fee
+    ) external payable returns (uint256 amountOut);
 
-    function swapNoSplitToAVAX(Trade calldata _trade, address _to, uint256 _fee) external;
+    function swapNoSplitToAVAX(
+        Trade calldata _trade,
+        address _to,
+        uint256 _fee
+    ) external returns (uint256 amountOut);
 
     function swapNoSplitWithPermit(
         Trade calldata _trade,
@@ -96,7 +112,7 @@ interface ILeetRouter {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    ) external;
+    ) external returns (uint256 amountOut);
 
     function swapNoSplitToAVAXWithPermit(
         Trade calldata _trade,
@@ -106,5 +122,5 @@ interface ILeetRouter {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    ) external;
+    ) external returns (uint256 amountOut);
 }

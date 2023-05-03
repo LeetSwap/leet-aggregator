@@ -99,7 +99,11 @@ contract LeetRouter is Maintainable, Recoverable, ILeetRouter {
      * @param _amount tokens to return
      * @param _to address where funds should be sent to
      */
-    function _returnTokensTo(address _token, uint256 _amount, address _to) internal {
+    function _returnTokensTo(
+        address _token,
+        uint256 _amount,
+        address _to
+    ) internal {
         if (address(this) != _to) {
             if (_token == NATIVE) {
                 payable(_to).transfer(_amount);
@@ -109,7 +113,12 @@ contract LeetRouter is Maintainable, Recoverable, ILeetRouter {
         }
     }
 
-    function _transferFrom(address token, address _from, address _to, uint256 _amount) internal {
+    function _transferFrom(
+        address token,
+        address _from,
+        address _to,
+        uint256 _amount
+    ) internal {
         if (_from != address(this)) IERC20(token).safeTransferFrom(_from, _to, _amount);
         else IERC20(token).safeTransfer(_to, _amount);
     }
@@ -292,7 +301,12 @@ contract LeetRouter is Maintainable, Recoverable, ILeetRouter {
 
     // -- SWAPPERS --
 
-    function _swapNoSplit(Trade calldata _trade, address _from, address _to, uint256 _fee) internal returns (uint256) {
+    function _swapNoSplit(
+        Trade calldata _trade,
+        address _from,
+        address _to,
+        uint256 _fee
+    ) internal returns (uint256) {
         uint256[] memory amounts = new uint256[](_trade.path.length);
         if (_fee > 0 || MIN_FEE > 0) {
             // Transfer fees to the claimer account and decrease initial amount
@@ -306,7 +320,8 @@ contract LeetRouter is Maintainable, Recoverable, ILeetRouter {
         for (uint256 i = 0; i < _trade.adapters.length; i++) {
             amounts[i + 1] = IAdapter(_trade.adapters[i]).query(amounts[i], _trade.path[i], _trade.path[i + 1]);
         }
-        require(amounts[amounts.length - 1] >= _trade.amountOut, "LeetRouter: Insufficient output amount");
+        require(amounts[amounts.length - 1] >= _trade.amountOut, "LeetRouter: Insufficient expected output amount");
+        uint256 balanceBefore = IERC20(_trade.path[_trade.path.length - 1]).balanceOf(_to);
         for (uint256 i = 0; i < _trade.adapters.length; i++) {
             // All adapters should transfer output token to the following target
             // All targets are the adapters, expect for the last swap where tokens are sent out
@@ -319,30 +334,45 @@ contract LeetRouter is Maintainable, Recoverable, ILeetRouter {
                 targetAddress
             );
         }
+        uint256 balanceAfter = IERC20(_trade.path[_trade.path.length - 1]).balanceOf(_to);
+        require(balanceAfter - balanceBefore >= _trade.amountOut, "LeetRouter: Insufficient output amount");
         emit LeetSwap(
             _trade.path[0],
             _trade.path[_trade.path.length - 1],
             _trade.amountIn,
-            amounts[amounts.length - 1]
+            balanceAfter - balanceBefore
         );
-        return amounts[amounts.length - 1];
+        return balanceAfter - balanceBefore;
     }
 
-    function swapNoSplit(Trade calldata _trade, address _to, uint256 _fee) public override {
-        _swapNoSplit(_trade, msg.sender, _to, _fee);
+    function swapNoSplit(
+        Trade calldata _trade,
+        address _to,
+        uint256 _fee
+    ) public override returns (uint256) {
+        return _swapNoSplit(_trade, msg.sender, _to, _fee);
     }
 
-    function swapNoSplitFromAVAX(Trade calldata _trade, address _to, uint256 _fee) external payable override {
+    function swapNoSplitFromAVAX(
+        Trade calldata _trade,
+        address _to,
+        uint256 _fee
+    ) public payable override returns (uint256) {
         require(_trade.path[0] == WNATIVE, "LeetRouter: Path needs to begin with WAVAX");
         _wrap(_trade.amountIn);
-        _swapNoSplit(_trade, address(this), _to, _fee);
+        return _swapNoSplit(_trade, address(this), _to, _fee);
     }
 
-    function swapNoSplitToAVAX(Trade calldata _trade, address _to, uint256 _fee) public override {
+    function swapNoSplitToAVAX(
+        Trade calldata _trade,
+        address _to,
+        uint256 _fee
+    ) public override returns (uint256) {
         require(_trade.path[_trade.path.length - 1] == WNATIVE, "LeetRouter: Path needs to end with WAVAX");
         uint256 returnAmount = _swapNoSplit(_trade, msg.sender, address(this), _fee);
         _unwrap(returnAmount);
         _returnTokensTo(NATIVE, returnAmount, _to);
+        return returnAmount;
     }
 
     /**
@@ -356,9 +386,9 @@ contract LeetRouter is Maintainable, Recoverable, ILeetRouter {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    ) external override {
+    ) external override returns (uint256) {
         IERC20(_trade.path[0]).permit(msg.sender, address(this), _trade.amountIn, _deadline, _v, _r, _s);
-        swapNoSplit(_trade, _to, _fee);
+        return swapNoSplit(_trade, _to, _fee);
     }
 
     /**
@@ -372,8 +402,8 @@ contract LeetRouter is Maintainable, Recoverable, ILeetRouter {
         uint8 _v,
         bytes32 _r,
         bytes32 _s
-    ) external override {
+    ) external override returns (uint256) {
         IERC20(_trade.path[0]).permit(msg.sender, address(this), _trade.amountIn, _deadline, _v, _r, _s);
-        swapNoSplitToAVAX(_trade, _to, _fee);
+        return swapNoSplitToAVAX(_trade, _to, _fee);
     }
 }
