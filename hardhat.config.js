@@ -18,12 +18,14 @@ require('./src/tasks/find-best-path')
 require('./src/tasks/find-best-path-wrapped')
 require('./src/tasks/list-adapters')
 
+const CANTO_RPC = getEnvValSafe('CANTO_RPC')
 const AVALANCHE_RPC = getEnvValSafe('AVALANCHE_RPC')
 const FUJI_RPC = getEnvValSafe('FUJI_RPC')
 const ARBITRUM_RPC = getEnvValSafe('ARBITRUM_RPC')
 const OPTIMISM_RPC = getEnvValSafe('OPTIMISM_RPC')
 const AURORA_RPC = getEnvValSafe('AURORA_RPC')
 const DOGECHAIN_RPC = getEnvValSafe('DOGECHAIN_RPC')
+const CANTO_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
 const AVALANCHE_PK_DEPLOYER = getEnvValSafe('AVALANCHE_PK_DEPLOYER')
 const ARBITRUM_PK_DEPLOYER = getEnvValSafe('ARBITRUM_PK_DEPLOYER')
 const OPTIMISM_PK_DEPLOYER = getEnvValSafe('OPTIMISM_PK_DEPLOYER')
@@ -73,7 +75,12 @@ module.exports = {
         accountsBalance: "10000000000000000000000000", 
         count: 200
       }
-    }, 
+    },
+    canto: {
+      chainId: 7700,
+      url: CANTO_RPC,
+      accounts: [ CANTO_PK_DEPLOYER ]
+    },
     avalanche: {
       chainId: 43114,
       gasPrice: 225000000000,

@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test:canto": "npx hardhat test ./src/test/spec/canto/**/*.spec.js",
     "test:avalanche": "npx hardhat test ./src/test/spec/avalanche/**/*.spec.js",
     "test:arbitrum": "npx hardhat test ./src/test/spec/arbitrum/**/*.spec.js",
     "test:optimism": "npx hardhat test ./src/test/spec/optimism/**/*.spec.js",
     "test:dogechain": "npx hardhat test ./src/test/spec/dogechain/**/*.spec.js",
+    "deploy:canto": "npx hardhat deploy --network canto --tags canto",
     "deploy:avalanche": "npx hardhat deploy --network avalanche --tags avalanche",
     "deploy:arbitrum": "npx hardhat deploy --network arbitrum --tags arbitrum",
     "deploy:optimism": "npx hardhat deploy --network optimism --tags optimism",

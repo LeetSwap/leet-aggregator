@@ -2,7 +2,8 @@ const {
     avalanche: ava, 
     dogechain: dog, 
     arbitrum: arb,
-    optimism: opt
+    optimism: opt,
+    canto
 } = require('./addresses.json')
 
 module.exports = {
@@ -54,6 +55,32 @@ module.exports = {
           ],
         wnative: ava.assets.WAVAX
     }, 
+    "canto": {
+        adapterWhitelist: [
+            'LeetswapAdapter',
+            'CantoswapAdapter',
+            'VelocimeterAdapter',
+            'ForteswapAdapter',
+            'CantodexAdapter',
+        ],
+        hopTokens: [
+            canto.assets.LEET,
+            canto.assets.WCANTO,
+            canto.assets.NOTE,
+            canto.assets.ETH,
+            canto.assets.USDC,
+            canto.assets.USDT,
+            canto.assets.WBTC,
+            canto.assets.BUSD,
+            canto.assets.ATOM,
+            canto.assets.cINU,
+            canto.assets.FLOW,
+            canto.assets.multiBTC,
+            canto.assets.WSTETH,
+            canto.assets.stATOM
+        ],
+        wnative: canto.assets.WCANTO
+    },
     "dogechain": {
         adapterWhitelist: [
             'DogeSwapAdapter',
